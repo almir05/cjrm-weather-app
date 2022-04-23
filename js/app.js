@@ -17,31 +17,6 @@ const getCityCardData = async () => {
   return {timeIcon, LocalizedName, WeatherText, Temperature, IsDayTime}
 }
 
-const showCityCard = () => {
-  const cityCardIsNotDisplaying = cityCard.classList.contains('d-none')
-  if (cityCardIsNotDisplaying) {
-    cityCard.classList.remove('d-none')
-  }  
-}
-
-const setCityCardData = async () => {
-  const cityCardData = await getCityCardData()
-
-  const { 
-    timeIcon,
-    LocalizedName,
-    WeatherText,
-    Temperature,
-    IsDayTime } = cityCardData
-    
-  timeIconContainer.innerHTML = timeIcon
-  cityNameContainer.textContent = LocalizedName
-  cityWeatherContainer.textContent = WeatherText
-  cityTemperatureContainer.textContent = Temperature.Metric.Value
-  
-  timeImg.src = IsDayTime ? './src/day.svg' : './src/night.svg'
-}
-
 const scrollPage = () => {
   setTimeout(() => {
     scrollTo({
@@ -52,14 +27,31 @@ const scrollPage = () => {
   }, 1000)
 }
 
-const handleCityCard = async event => {
-  event.preventDefault() 
-
-  showCityCard()
-  setCityCardData()  
-  scrollPage()  
-
-  cityForm.reset()
+const setCityCardData = async () => {
+  const { timeIcon, LocalizedName, WeatherText, Temperature, IsDayTime } = 
+    await getCityCardData()
+        
+    timeIconContainer.innerHTML = timeIcon
+    cityNameContainer.textContent = LocalizedName
+    cityWeatherContainer.textContent = WeatherText
+    cityTemperatureContainer.textContent = Temperature.Metric.Value
+    
+    timeImg.src = IsDayTime ? './src/day.svg' : './src/night.svg'
+    
+    scrollPage()
+    cityForm.reset()
 }
 
-cityForm.addEventListener('submit', handleCityCard)
+const showCityCard = event => {
+  event.preventDefault()
+  
+  const thereIsNoCityCard = cityCard.classList.contains('d-none')
+
+  if (thereIsNoCityCard) {
+    cityCard.classList.remove('d-none')
+  }
+
+    setCityCardData()
+} 
+
+cityForm.addEventListener('submit', showCityCard)
